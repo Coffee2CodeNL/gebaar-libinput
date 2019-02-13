@@ -12,6 +12,7 @@ _Gebaar means Gesture in Dutch_
 - [ ] Receiving rotation events from libinput
 - [x] Converting libinput events to motions
 - [ ] Running commands based on motions
+- [ ] Refactor code to be up to Release standards, instead of testing-hell
 
 ### Screenshots of debug/testing output
 
