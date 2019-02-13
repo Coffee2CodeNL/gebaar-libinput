@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(sxgd)
 set(CMAKE_VERBOSE_MAKEFILE on)
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 

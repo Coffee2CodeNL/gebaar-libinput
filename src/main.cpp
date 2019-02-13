@@ -15,6 +15,7 @@
 //      You should have received a copy of the GNU General Public License
 //      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+
 #include <iostream>
 #include <libinput.h>
 #include <libudev.h>
@@ -38,25 +39,55 @@ const static struct libinput_interface interface = {
         .open_restricted = open_restricted,
         .close_restricted = close_restricted,
 };
+struct swipe_event {
+        int fingers;
+        double x;
+        double y;
+};
+static swipe_event swipeEvent = {};
+
+static void handleSwipeEventWithoutCoords(libinput_event_gesture *gev, bool begin) {
+    auto fingers = libinput_event_gesture_get_finger_count(gev);
+    if(begin) {
+        swipeEvent.fingers = fingers;
+    } else {
+        auto absX = abs(swipeEvent.x);
+        auto absY = abs(swipeEvent.y);
+        if(absX > absY) {
+            if(swipeEvent.x < 0) {
+                spdlog::info("{} Finger Swipe Left", swipeEvent.fingers);
+            } else {
+                spdlog::info("{} Finger Swipe Right", swipeEvent.fingers);
+            }
+        } else {
+            if(swipeEvent.y < 0) {
+                spdlog::info("{} Finger Swipe Up", swipeEvent.fingers);
+            } else {
+                spdlog::info("{} Finger Swipe Down", swipeEvent.fingers);
+            }
+        }
+        swipeEvent = {};
+    }
+}
+
+static void handleSwipeEventWithCoords(libinput_event_gesture *gev) {
+    swipeEvent.x += libinput_event_gesture_get_dx(gev);
+    swipeEvent.y += libinput_event_gesture_get_dy(gev);
+}
 
 static int handleEvents(libinput *li) {
     struct libinput_event *liEv;
     libinput_dispatch(li);
     while ((liEv = libinput_get_event(li))) {
-        string evType;
-        bool workableEvent = false;
         switch (libinput_event_get_type(liEv)) {
             case LIBINPUT_EVENT_GESTURE_SWIPE_BEGIN:
-                evType = "SWIPE_STA";
-                workableEvent = true;
+                handleSwipeEventWithoutCoords(libinput_event_get_gesture_event(liEv), true);
                 break;
             case LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE:
-                evType = "SWIPE_UPD";
-                workableEvent = true;
+                handleSwipeEventWithCoords(libinput_event_get_gesture_event(liEv));
                 break;
             case LIBINPUT_EVENT_GESTURE_SWIPE_END:
-                evType = "SWIPE_END";
-                workableEvent = true;
+                handleSwipeEventWithoutCoords(libinput_event_get_gesture_event(liEv), false);
                 break;
             case LIBINPUT_EVENT_NONE:
                 break;
@@ -107,13 +138,7 @@ static int handleEvents(libinput *li) {
             case LIBINPUT_EVENT_SWITCH_TOGGLE:
                 break;
         }
-        if (workableEvent) {
-            struct libinput_event_gesture *gev = libinput_event_get_gesture_event(liEv);
-            auto fingers = libinput_event_gesture_get_finger_count(gev);
-            auto deltaX = libinput_event_gesture_get_dx(gev);
-            auto deltaY = libinput_event_gesture_get_dy(gev);
-            spdlog::info("Got event: {}, {} fingers, {},{}", evType, fingers, deltaX, deltaY);
-        }
+
         libinput_event_destroy(liEv);
         libinput_dispatch(li);
     }
@@ -164,6 +189,8 @@ int main() {
 
     if (deviceWithGestureSupportExists) {
         mainLoop(li);
+    } else {
+        spdlog::warn("No supported devices found, this won't work");
     }
     libinput_unref(li);
 
