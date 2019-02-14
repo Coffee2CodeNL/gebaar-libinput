@@ -7,6 +7,12 @@ _Gebaar means Gesture in Dutch_
 
 Run any command by simply gesturing on your touchpad!
 
+### What makes this different over the other implementations?
+
+[libinput-gestures](https://github.com/bulletmark/libinput-gestures) and [fusuma](https://github.com/iberianpig/fusuma) both parse the output of the shell command `libinput debug-events`.
+
+This piece of software directly interfaces with libinput to parse the events, this is both more stable and faster.
+
 ### How to install
 
 - Move gebaard to `/usr/bin` or `~/bin`
