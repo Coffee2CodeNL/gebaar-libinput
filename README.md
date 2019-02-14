@@ -17,11 +17,12 @@ This piece of software directly interfaces with libinput to parse the events, th
 ### How to build from source
 
 1. Clone the repository
-2. Run `git submodule update --init` in the root folder
-3. Run `mkdir build && cd build`
-4. Run `cmake ..`
-5. Run `make -j$(nproc)`
-6. Follow install instructions below from Step 2
+2. Check out the latest version (`git checkout v0.0.1`)
+3. Run `git submodule update --init` in the root folder
+4. Run `mkdir build && cd build`
+5. Run `cmake ..`
+6. Run `make -j$(nproc)`
+7. Follow install instructions below from Step 2
 
 ### How to install
 
