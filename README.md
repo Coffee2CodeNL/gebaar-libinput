@@ -1,5 +1,6 @@
 Gebaar
 =========
+[![Gitter chat](https://badges.gitter.im/gebaar-libinput/community.png)](https://gitter.im/gebaar-libinput/community)
 
 WM Independent Touchpad Gesture Daemon for libinput
 
