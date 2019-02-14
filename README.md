@@ -14,13 +14,24 @@ Run any command by simply gesturing on your touchpad!
 
 This piece of software directly interfaces with libinput to parse the events, this is both more stable and faster.
 
+### How to build from source
+
+1. Clone the repository
+2. Run `git submodule update --init` in the root folder
+3. Run `mkdir build && cd build`
+4. Run `cmake ..`
+5. Run `make -j$(nproc)`
+6. Follow install instructions below from Step 2
+
 ### How to install
 
-- Grab the [latest release!](https://github.com/Coffee2CodeNL/gebaar-libinput/releases/latest)
-- Move gebaard to `/usr/bin` or `~/bin`
-- Run `mkdir -p ~/.config/gebaar`
-- Run `nano ~/.config/gebaar/gebaard.toml` (or vim, if you like it better)
-- Add the following snippet to `gebaard.toml`
+1. Grab the [latest release!](https://github.com/Coffee2CodeNL/gebaar-libinput/releases/latest)
+2. Move gebaard to `/usr/bin` or `~/bin`
+3. Run `mkdir -p ~/.config/gebaar`
+4. Run `nano ~/.config/gebaar/gebaard.toml` (or vim, if you like it better)
+5. Add the snippet below to `gebaard.toml`
+6. Configure commands to run per direction
+7. Run Gebaar in some startup file via `gebaard -b`
 
 ```toml
 [commands.swipe.three]
@@ -35,8 +46,8 @@ down = ""
 left = ""
 right = ""
 ```
-- Configure commands to run per direction
-- Run it in some startup file via `gebaard -b`
+
+
 
 ### Examples
 
