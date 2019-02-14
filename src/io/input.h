@@ -20,7 +20,9 @@
 #define GEBAAR_INPUT_HPP
 
 #include <libinput.h>
-#include <spdlog/spdlog.h>
+#include <fcntl.h>
+#include <zconf.h>
+#include "../config/config.h"
 
 namespace gebaar::io {
     struct gesture_swipe_event {
@@ -31,16 +33,25 @@ namespace gebaar::io {
 
     class Input {
     public:
-        Input();
+        Input(std::shared_ptr<gebaar::config::Config> const& config_ptr);
 
-        int initialize_context();
+        ~Input();
+
+        bool initialize();
+
+        void start_loop();
 
     private:
-        shared_ptr<spdlog::logger> logger;
+        std::shared_ptr<gebaar::config::Config> config;
+
         struct libinput* libinput;
         struct libinput_event* libinput_event;
         struct udev* udev;
-        gesture_swipe_event gesture_swipe_event;
+        struct gesture_swipe_event gesture_swipe_event;
+
+        bool initialize_context();
+
+        bool find_gesture_device();
 
         static int open_restricted(const char* path, int flags, void* user_data)
         {
@@ -53,10 +64,12 @@ namespace gebaar::io {
             close(fd);
         }
 
-        const static struct libinput_interface libinput_interface = {
+        constexpr static struct libinput_interface libinput_interface = {
                 .open_restricted = open_restricted,
                 .close_restricted = close_restricted,
         };
+
+        void handle_event();
 
         void handle_swipe_event_without_coords(libinput_event_gesture* gev, bool begin);
 
