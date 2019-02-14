@@ -15,6 +15,7 @@ This piece of software directly interfaces with libinput to parse the events, th
 
 ### How to install
 
+- Grab the [latest release!](https://github.com/Coffee2CodeNL/gebaar-libinput/releases/latest)
 - Move gebaard to `/usr/bin` or `~/bin`
 - Run `mkdir -p ~/.config/gebaar`
 - Run `nano ~/.config/gebaar/gebaard.toml` (or vim, if you like it better)
