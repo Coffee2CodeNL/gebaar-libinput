@@ -29,7 +29,9 @@ This is more stable, faster, and more efficient as it **does not parse the outpu
 9. Run `nano ~/.config/gebaar/gebaard.toml` (or vim, if you like it better)
 10. Add the snippet below to `gebaard.toml`
 11. Configure commands to run per direction
-12. Run Gebaar in some startup file via `gebaard -b`
+12. Add yourself to the `input` group with `usermod -a -G input $USER`
+13. Run Gebaar via some startup file by adding `gebaard -b` to it
+14. Reboot and see the magic
 
 ```toml
 [commands.swipe.three]
