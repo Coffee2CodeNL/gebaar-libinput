@@ -10,9 +10,11 @@ Run any command by simply gesturing on your touchpad!
 
 ### What makes this different over the other implementations?
 
-[libinput-gestures](https://github.com/bulletmark/libinput-gestures) and [fusuma](https://github.com/iberianpig/fusuma) both parse the output of the shell command `libinput debug-events`.
+[libinput-gestures](https://github.com/bulletmark/libinput-gestures) and [fusuma](https://github.com/iberianpig/fusuma) both parse the output of the shell command `libinput debug-events` which is an unstable API and the output just keeps coming, so it'll eat (some) RAM.
 
-This piece of software directly interfaces with libinput to parse the events, this is both more stable and faster.
+Gebaar directly interfaces with libinput to receive and react to the events.   
+This is more stable, faster, and more efficient as it **does not parse the output of a program** like the aforementioned projects do.
+
 
 ### How to build and install
 
