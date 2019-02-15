@@ -1,6 +1,6 @@
 [submodule "libs/cxxopts"]
 	path = libs/cxxopts
-	url = git@github.com:jarro2783/cxxopts.git
+	url = https://github.com/jarro2783/cxxopts
 [submodule "libs/cpptoml"]
 	path = libs/cpptoml
-	url = git@github.com:skystrife/cpptoml.git
+	url = https://github.com/skystrife/cpptoml
