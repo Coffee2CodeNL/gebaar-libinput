@@ -1,6 +1,6 @@
 Gebaar
 =========
-[![Gitter chat](https://badges.gitter.im/gebaar-libinput/community.png)](https://gitter.im/gebaar-libinput/community)
+[![](https://img.shields.io/gitter/room/gebaar-libinput/community.svg?style=flat)](https://gitter.im/gebaar-libinput/community)
 
 WM Independent Touchpad Gesture Daemon for libinput
 
@@ -47,7 +47,9 @@ left = ""
 right = ""
 ```
 
+### Repository versions
 
+![](https://img.shields.io/aur/version/gebaar.svg?style=flat)  
 
 ### Examples
 
