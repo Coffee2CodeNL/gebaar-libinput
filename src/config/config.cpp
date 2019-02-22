@@ -31,14 +31,25 @@ void gebaar::config::Config::load_config()
     if (find_home_folder()) {
         if (find_config_file()) {
             config = cpptoml::parse_file(std::filesystem::path(config_file_path));
-            swipe_three_up_command = *config->get_qualified_as<std::string>("commands.swipe.three.up");
-            swipe_three_down_command = *config->get_qualified_as<std::string>("commands.swipe.three.down");
-            swipe_three_left_command = *config->get_qualified_as<std::string>("commands.swipe.three.left");
-            swipe_three_right_command = *config->get_qualified_as<std::string>("commands.swipe.three.right");
-            swipe_four_up_command = *config->get_qualified_as<std::string>("commands.swipe.four.up");
-            swipe_four_down_command = *config->get_qualified_as<std::string>("commands.swipe.four.down");
-            swipe_four_left_command = *config->get_qualified_as<std::string>("commands.swipe.four.left");
-            swipe_four_right_command = *config->get_qualified_as<std::string>("commands.swipe.four.right");
+
+            swipe_three_commands[1] = *config->get_qualified_as<std::string>("commands.swipe.three.left_up");
+            swipe_three_commands[2] = *config->get_qualified_as<std::string>("commands.swipe.three.up");
+            swipe_three_commands[3] = *config->get_qualified_as<std::string>("commands.swipe.three.right_up");
+            swipe_three_commands[4] = *config->get_qualified_as<std::string>("commands.swipe.three.left");
+            swipe_three_commands[6] = *config->get_qualified_as<std::string>("commands.swipe.three.right");
+            swipe_three_commands[7] = *config->get_qualified_as<std::string>("commands.swipe.three.left_down");
+            swipe_three_commands[8] = *config->get_qualified_as<std::string>("commands.swipe.three.down");
+            swipe_three_commands[9] = *config->get_qualified_as<std::string>("commands.swipe.three.right_down");
+
+            swipe_four_commands[1] = *config->get_qualified_as<std::string>("commands.swipe.four.left_up");
+            swipe_four_commands[2] = *config->get_qualified_as<std::string>("commands.swipe.four.up");
+            swipe_four_commands[3] = *config->get_qualified_as<std::string>("commands.swipe.four.right_up");
+            swipe_four_commands[4] = *config->get_qualified_as<std::string>("commands.swipe.four.left");
+            swipe_four_commands[6] = *config->get_qualified_as<std::string>("commands.swipe.four.right");
+            swipe_four_commands[7] = *config->get_qualified_as<std::string>("commands.swipe.four.left_down");
+            swipe_four_commands[8] = *config->get_qualified_as<std::string>("commands.swipe.four.down");
+            swipe_four_commands[9] = *config->get_qualified_as<std::string>("commands.swipe.four.right_down");
+
             loaded = true;
         }
     }

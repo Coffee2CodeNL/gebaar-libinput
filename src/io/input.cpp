@@ -38,42 +38,39 @@ void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture
         gesture_swipe_event.fingers = libinput_event_gesture_get_finger_count(gev);
     }
     else {
-        if (abs(gesture_swipe_event.x)>abs(gesture_swipe_event.y)) {
-            if (gesture_swipe_event.x<0) {
-                if (gesture_swipe_event.fingers==3) {
-                    std::system(config->swipe_three_left_command.c_str());
-                }
-                else if (gesture_swipe_event.fingers==4) {
-                    std::system(config->swipe_four_left_command.c_str());
-                }
+        double x = gesture_swipe_event.x;
+        double y = gesture_swipe_event.y;
+        int swipe_type = 5; // middle = no swipe
+                           // 1 = left_up, 2 = up, 3 = right_up...
+                           // 1 2 3
+                           // 4 5 6
+                           // 7 8 9
+        const double OBLIQUE_RATIO = 0.414; // =~ tan(22.5);
+
+        if (abs(x) > abs(y)) {
+            // left or right swipe
+            swipe_type += x < 0 ? -1 : 1;
+
+            // check for oblique swipe
+            if (abs(y) / abs(x) > OBLIQUE_RATIO) {
+                swipe_type += y < 0 ? -3 : 3;
             }
-            else {
-                if (gesture_swipe_event.fingers==3) {
-                    std::system(config->swipe_three_right_command.c_str());
-                }
-                else if (gesture_swipe_event.fingers==4) {
-                    std::system(config->swipe_four_right_command.c_str());
-                }
-            }
-        }
-        else {
-            if (gesture_swipe_event.y<0) {
-                if (gesture_swipe_event.fingers==3) {
-                    std::system(config->swipe_three_up_command.c_str());
-                }
-                else if (gesture_swipe_event.fingers==4) {
-                    std::system(config->swipe_four_up_command.c_str());
-                }
-            }
-            else {
-                if (gesture_swipe_event.fingers==3) {
-                    std::system(config->swipe_three_down_command.c_str());
-                }
-                else if (gesture_swipe_event.fingers==4) {
-                    std::system(config->swipe_four_down_command.c_str());
-                }
+        } else {
+            // up of down swipe
+            swipe_type += y < 0 ? -3 : 3;
+
+            // check for oblique swipe
+            if (abs(x) / abs(y) > OBLIQUE_RATIO) {
+                swipe_type += x < 0 ? -1 : 1;
             }
         }
+
+        if (gesture_swipe_event.fingers == 3) {
+            std::system(config->swipe_three_commands[swipe_type].c_str());
+        } else if (gesture_swipe_event.fingers == 4) {
+            std::system(config->swipe_four_commands[swipe_type].c_str());
+        }
+
         gesture_swipe_event = {};
     }
 }
