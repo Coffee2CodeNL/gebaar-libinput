@@ -33,14 +33,9 @@ namespace gebaar::config {
 
         void load_config();
 
-        std::string swipe_four_up_command;
-        std::string swipe_four_down_command;
-        std::string swipe_four_left_command;
-        std::string swipe_four_right_command;
-        std::string swipe_three_up_command;
-        std::string swipe_three_down_command;
-        std::string swipe_three_left_command;
-        std::string swipe_three_right_command;
+        std::string swipe_three_commands[9];
+        std::string swipe_four_commands[9];
+
     private:
         bool find_config_file();
 
