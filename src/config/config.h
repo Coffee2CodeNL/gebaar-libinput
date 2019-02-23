@@ -35,6 +35,8 @@ namespace gebaar::config {
 
         std::string swipe_three_commands[10];
         std::string swipe_four_commands[10];
+        std::string pinch_in_command;
+        std::string pinch_out_command;
 
     private:
         bool config_file_exists();
