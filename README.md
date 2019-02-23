@@ -1,6 +1,5 @@
 Gebaar
 =========
-[![](https://img.shields.io/gitter/room/gebaar-libinput/community.svg?style=flat)](https://gitter.im/gebaar-libinput/community)
 
 WM Independent Touchpad Gesture Daemon for libinput
 
@@ -15,6 +14,9 @@ Run any command by simply gesturing on your touchpad!
 Gebaar directly interfaces with libinput to receive and react to the events.   
 This is more stable, faster, and more efficient as it **does not parse the output of a program** like the aforementioned projects do.
 
+### Getting support (or talking about the project's future)
+
+Click to join: [![Discord](https://img.shields.io/discord/548978799136473106.svg?label=Discord)](https://discord.gg/9mbKhFR)
 
 ### How to build and install
 
