@@ -1,6 +1,6 @@
 Gebaar
 =========
-[![Gitter chat](https://badges.gitter.im/gebaar-libinput/community.png)](https://gitter.im/gebaar-libinput/community)
+[![](https://img.shields.io/gitter/room/gebaar-libinput/community.svg?style=flat)](https://gitter.im/gebaar-libinput/community)
 
 WM Independent Touchpad Gesture Daemon for libinput
 
@@ -19,7 +19,7 @@ This is more stable, faster, and more efficient as it **does not parse the outpu
 ### How to build and install
 
 1. Clone the repository via `git clone https://github.com/Coffee2CodeNL/gebaar-libinput`
-2. Check out the latest version (`git checkout v0.0.1`)
+2. Check out the latest version (`git checkout v0.0.3`)
 3. Run `git submodule update --init` in the root folder
 4. Run `mkdir build && cd build`
 5. Run `cmake ..`
@@ -47,7 +47,9 @@ left = ""
 right = ""
 ```
 
+### Repository versions
 
+![](https://img.shields.io/aur/version/gebaar.svg?style=flat)  
 
 ### Examples
 

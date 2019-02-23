@@ -51,7 +51,7 @@ namespace gebaar::io {
 
         bool initialize_context();
 
-        bool find_gesture_device();
+        bool gesture_device_exists();
 
         static int open_restricted(const char* path, int flags, void* user_data)
         {

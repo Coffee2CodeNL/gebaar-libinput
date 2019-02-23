@@ -33,18 +33,13 @@ namespace gebaar::config {
 
         void load_config();
 
-        std::string swipe_four_up_command;
-        std::string swipe_four_down_command;
-        std::string swipe_four_left_command;
-        std::string swipe_four_right_command;
-        std::string swipe_three_up_command;
-        std::string swipe_three_down_command;
-        std::string swipe_three_left_command;
-        std::string swipe_three_right_command;
-    private:
-        bool find_config_file();
+        std::string swipe_three_commands[10];
+        std::string swipe_four_commands[10];
 
-        bool find_home_folder();
+    private:
+        bool config_file_exists();
+
+        bool find_config_file();
 
         std::string config_file_path;
         std::shared_ptr<cpptoml::table> config;

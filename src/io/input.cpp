@@ -19,12 +19,22 @@
 #include <poll.h>
 #include "input.h"
 
+/**
+ * Input system constructor, we pass our Configuration object via a shared pointer
+ *
+ * @param config_ptr shared pointer to configuration object
+ */
 gebaar::io::Input::Input(std::shared_ptr<gebaar::config::Config> const& config_ptr)
 {
     config = config_ptr;
     gesture_swipe_event = {};
 }
 
+/**
+ * Initialize the libinput context
+ *
+ * @return bool
+ */
 bool gebaar::io::Input::initialize_context()
 {
     udev = udev_new();
@@ -32,64 +42,80 @@ bool gebaar::io::Input::initialize_context()
     return libinput_udev_assign_seat(libinput, "seat0")==0;
 }
 
+/**
+ * This event has no coordinates, so it's an event that gives us a begin or end signal.
+ * If it begins, we get the amount of fingers used.
+ * If it ends, we check what kind of gesture we received.
+ *
+ * @param gev Gesture Event
+ * @param begin Boolean to denote begin or end of gesture
+ */
 void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture* gev, bool begin)
 {
     if (begin) {
         gesture_swipe_event.fingers = libinput_event_gesture_get_finger_count(gev);
     }
     else {
-        if (abs(gesture_swipe_event.x)>abs(gesture_swipe_event.y)) {
-            if (gesture_swipe_event.x<0) {
-                if (gesture_swipe_event.fingers==3) {
-                    std::system(config->swipe_three_left_command.c_str());
-                }
-                else if (gesture_swipe_event.fingers==4) {
-                    std::system(config->swipe_four_left_command.c_str());
-                }
+        double x = gesture_swipe_event.x;
+        double y = gesture_swipe_event.y;
+        int swipe_type = 5; // middle = no swipe
+                           // 1 = left_up, 2 = up, 3 = right_up...
+                           // 1 2 3
+                           // 4 5 6
+                           // 7 8 9
+        const double OBLIQUE_RATIO = 0.414; // =~ tan(22.5);
+
+        if (abs(x) > abs(y)) {
+            // left or right swipe
+            swipe_type += x < 0 ? -1 : 1;
+
+            // check for oblique swipe
+            if (abs(y) / abs(x) > OBLIQUE_RATIO) {
+                swipe_type += y < 0 ? -3 : 3;
             }
-            else {
-                if (gesture_swipe_event.fingers==3) {
-                    std::system(config->swipe_three_right_command.c_str());
-                }
-                else if (gesture_swipe_event.fingers==4) {
-                    std::system(config->swipe_four_right_command.c_str());
-                }
-            }
-        }
-        else {
-            if (gesture_swipe_event.y<0) {
-                if (gesture_swipe_event.fingers==3) {
-                    std::system(config->swipe_three_up_command.c_str());
-                }
-                else if (gesture_swipe_event.fingers==4) {
-                    std::system(config->swipe_four_up_command.c_str());
-                }
-            }
-            else {
-                if (gesture_swipe_event.fingers==3) {
-                    std::system(config->swipe_three_down_command.c_str());
-                }
-                else if (gesture_swipe_event.fingers==4) {
-                    std::system(config->swipe_four_down_command.c_str());
-                }
+        } else {
+            // up of down swipe
+            swipe_type += y < 0 ? -3 : 3;
+
+            // check for oblique swipe
+            if (abs(x) / abs(y) > OBLIQUE_RATIO) {
+                swipe_type += x < 0 ? -1 : 1;
             }
         }
+
+        if (gesture_swipe_event.fingers == 3) {
+            std::system(config->swipe_three_commands[swipe_type].c_str());
+        } else if (gesture_swipe_event.fingers == 4) {
+            std::system(config->swipe_four_commands[swipe_type].c_str());
+        }
+
         gesture_swipe_event = {};
     }
 }
 
+/**
+ * Swipe events with coordinates, add it to the current tally
+ * @param gev Gesture Event
+ */
 void gebaar::io::Input::handle_swipe_event_with_coords(libinput_event_gesture* gev)
 {
     gesture_swipe_event.x += libinput_event_gesture_get_dx(gev);
     gesture_swipe_event.y += libinput_event_gesture_get_dy(gev);
 }
 
+/**
+ * Initialize the input system
+ * @return bool
+ */
 bool gebaar::io::Input::initialize()
 {
     initialize_context();
-    return find_gesture_device();
+    return gesture_device_exists();
 }
 
+/**
+ * Run a poll loop on the file descriptor that libinput gives us
+ */
 void gebaar::io::Input::start_loop()
 {
     struct pollfd fds{};
@@ -107,7 +133,11 @@ gebaar::io::Input::~Input()
     libinput_unref(libinput);
 }
 
-bool gebaar::io::Input::find_gesture_device()
+/**
+ * Check if there's a device that supports gestures on this system
+ * @return
+ */
+bool gebaar::io::Input::gesture_device_exists()
 {
     bool device_found = false;
     while ((libinput_event = libinput_get_event(libinput))!=nullptr) {
@@ -122,6 +152,9 @@ bool gebaar::io::Input::find_gesture_device()
     return device_found;
 }
 
+/**
+ * Handle an event from libinput and run the appropriate action per event type
+ */
 void gebaar::io::Input::handle_event()
 {
     libinput_dispatch(libinput);
