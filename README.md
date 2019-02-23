@@ -19,7 +19,7 @@ This is more stable, faster, and more efficient as it **does not parse the outpu
 ### How to build and install
 
 1. Clone the repository via `git clone https://github.com/Coffee2CodeNL/gebaar-libinput`
-2. Check out the latest version (`git checkout v0.0.3`)
+2. Check out the latest version (`git checkout v0.0.4`)
 3. Run `git submodule update --init` in the root folder
 4. Run `mkdir build && cd build`
 5. Run `cmake ..`
