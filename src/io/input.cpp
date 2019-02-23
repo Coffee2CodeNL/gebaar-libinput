@@ -19,12 +19,22 @@
 #include <poll.h>
 #include "input.h"
 
+/**
+ * Input system constructor, we pass our Configuration object via a shared pointer
+ *
+ * @param config_ptr shared pointer to configuration object
+ */
 gebaar::io::Input::Input(std::shared_ptr<gebaar::config::Config> const& config_ptr)
 {
     config = config_ptr;
     gesture_swipe_event = {};
 }
 
+/**
+ * Initialize the libinput context
+ *
+ * @return bool
+ */
 bool gebaar::io::Input::initialize_context()
 {
     udev = udev_new();
@@ -32,6 +42,14 @@ bool gebaar::io::Input::initialize_context()
     return libinput_udev_assign_seat(libinput, "seat0")==0;
 }
 
+/**
+ * This event has no coordinates, so it's an event that gives us a begin or end signal.
+ * If it begins, we get the amount of fingers used.
+ * If it ends, we check what kind of gesture we received.
+ *
+ * @param gev Gesture Event
+ * @param begin Boolean to denote begin or end of gesture
+ */
 void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture* gev, bool begin)
 {
     if (begin) {
@@ -75,18 +93,29 @@ void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture
     }
 }
 
+/**
+ * Swipe events with coordinates, add it to the current tally
+ * @param gev Gesture Event
+ */
 void gebaar::io::Input::handle_swipe_event_with_coords(libinput_event_gesture* gev)
 {
     gesture_swipe_event.x += libinput_event_gesture_get_dx(gev);
     gesture_swipe_event.y += libinput_event_gesture_get_dy(gev);
 }
 
+/**
+ * Initialize the input system
+ * @return bool
+ */
 bool gebaar::io::Input::initialize()
 {
     initialize_context();
-    return find_gesture_device();
+    return gesture_device_exists();
 }
 
+/**
+ * Run a poll loop on the file descriptor that libinput gives us
+ */
 void gebaar::io::Input::start_loop()
 {
     struct pollfd fds{};
@@ -104,7 +133,11 @@ gebaar::io::Input::~Input()
     libinput_unref(libinput);
 }
 
-bool gebaar::io::Input::find_gesture_device()
+/**
+ * Check if there's a device that supports gestures on this system
+ * @return
+ */
+bool gebaar::io::Input::gesture_device_exists()
 {
     bool device_found = false;
     while ((libinput_event = libinput_get_event(libinput))!=nullptr) {
@@ -119,6 +152,9 @@ bool gebaar::io::Input::find_gesture_device()
     return device_found;
 }
 
+/**
+ * Handle an event from libinput and run the appropriate action per event type
+ */
 void gebaar::io::Input::handle_event()
 {
     libinput_dispatch(libinput);

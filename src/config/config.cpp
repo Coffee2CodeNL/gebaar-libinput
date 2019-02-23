@@ -20,16 +20,22 @@
 #include <zconf.h>
 #include "config.h"
 
-bool gebaar::config::Config::find_config_file()
+/**
+ * Check if config file exists at current path
+ */
+bool gebaar::config::Config::config_file_exists()
 {
     auto true_path = std::filesystem::path(config_file_path);
     return std::filesystem::exists(true_path);
 }
 
+/**
+ * Load Configuration from TOML file
+ */
 void gebaar::config::Config::load_config()
 {
-    if (find_home_folder()) {
-        if (find_config_file()) {
+    if (find_config_file()) {
+        if (config_file_exists()) {
             config = cpptoml::parse_file(std::filesystem::path(config_file_path));
 
             swipe_three_commands[1] = *config->get_qualified_as<std::string>("commands.swipe.three.left_up");
@@ -56,7 +62,11 @@ void gebaar::config::Config::load_config()
 
 }
 
-bool gebaar::config::Config::find_home_folder()
+/**
+ * Find the configuration file according to XDG spec
+ * @return bool
+ */
+bool gebaar::config::Config::find_config_file()
 {
     const char* temp_path;
     temp_path = getenv("XDG_CONFIG_HOME");

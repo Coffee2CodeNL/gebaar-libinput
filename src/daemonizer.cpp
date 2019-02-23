@@ -19,7 +19,11 @@
 
 #include "daemonizer.h"
 
-
+/**
+ * Forking logic for classic style daemon functionality
+ *
+ * @return bool that denotes fork success
+ */
 bool gebaar::daemonizer::Daemonizer::daemonize()
 {
     pid_t pid = 0;
