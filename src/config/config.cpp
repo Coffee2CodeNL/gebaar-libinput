@@ -68,17 +68,21 @@ void gebaar::config::Config::load_config()
  */
 bool gebaar::config::Config::find_config_file()
 {
-    const char* temp_path;
-    temp_path = getenv("XDG_CONFIG_HOME");
-    if (temp_path==nullptr) {
+    std::string temp_path = getenv("XDG_CONFIG_HOME");
+    if (temp_path.empty()) {
+        // first get the path to HOME
         temp_path = getenv("HOME");
-        if (temp_path==nullptr) {
+        if (temp_path.empty()) {
             temp_path = getpwuid(getuid())->pw_dir;
         }
+        // then append .config
+        if (!temp_path.empty()) {
+            temp_path.append("/.config");
+        }
     }
-    if (temp_path!=nullptr) {
+    if (!temp_path.empty()) {
         config_file_path = temp_path;
-        config_file_path.append("/.config/gebaar/gebaard.toml");
+        config_file_path.append("/gebaar/gebaard.toml");
         return true;
     }
     return false;
