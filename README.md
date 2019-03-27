@@ -21,7 +21,7 @@ Click to join: [![Discord](https://img.shields.io/discord/548978799136473106.svg
 ### How to build and install
 
 1. Clone the repository via `git clone https://github.com/Coffee2CodeNL/gebaar-libinput`
-2. Check out the latest version (`git checkout v0.0.4`)
+2. Check out the latest version (`git checkout v0.0.5`)
 3. Run `git submodule update --init` in the root folder
 4. Run `mkdir build && cd build`
 5. Run `cmake ..`
@@ -37,13 +37,21 @@ Click to join: [![Discord](https://img.shields.io/discord/548978799136473106.svg
 
 ```toml
 [commands.swipe.three]
+left_up = ""
+right_up = ""
 up = ""
+left_down = ""
+right_down = ""
 down = ""
 left = ""
 right = ""
 
 [commands.swipe.four]
+left_up = ""
+right_up = ""
 up = ""
+left_down = ""
+right_down = ""
 down = ""
 left = ""
 right = ""
@@ -60,13 +68,21 @@ right = ""
 _~/.config/gebaar/gebaard.toml_
 ```toml
 [commands.swipe.three]
+left_up = ""
+right_up = ""
 up = "bspc node -f north"
+left_down = ""
+right_down = ""
 down = "bspc node -f south"
 left = "bspc node -f west"
 right = "bspc node -f east"
 
 [commands.swipe.four]
+left_up = ""
+right_up = ""
 up = "rofi -show combi"
+left_down = ""
+right_down = ""
 down = ""
 left = "bspc desktop -f prev"
 right = "bspc desktop -f next"
