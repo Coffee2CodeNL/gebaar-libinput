@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=gebaar-libinput
+Comment=Touchpad Gesture Daemon for libinput
+Exec=/usr/bin/gebaard -b
+StartupNotify=false
+Terminal=false
+Type=Application
+X-GNOME-Autostart-enabled=true
