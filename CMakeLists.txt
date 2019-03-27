@@ -12,7 +12,9 @@ add_executable(gebaard
         src/config/config.cpp
         src/config/config.h
         src/daemonizer.cpp
-        src/daemonizer.h)
+        src/daemonizer.h
+        src/util.cpp
+        src/util.h)
 
 find_package(PkgConfig)
 if (PKG_CONFIG_FOUND)
