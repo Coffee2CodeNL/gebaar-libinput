@@ -1,0 +1,22 @@
+compiler: gcc
+
+os: linux
+
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+      - ubuntu-toolchain-r-test
+    packages:
+      - cmake-data
+      - cmake
+      - gcc-8
+      - libinput-dev
+      - zlib1g-dev
+
+before_script:
+  - git submodule update --init
+
+script:
+  - cmake .
+  - make -j$(nproc)
