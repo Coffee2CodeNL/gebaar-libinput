@@ -1,14 +1,17 @@
-compiler: c
-
+language: c
+compiler: gcc
 os: linux
+dist: xenial
 
 before_install:
-  - cat /etc/apt/sources.list
-  - ls -la && cat /etc/apt/sources.list.d/*.list
-  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
+  - sudo rm -f /etc/apt/sources.list.d/*
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -q
   - sudo apt-get install -y cmake gcc-8 libinput-dev zlib1g-dev
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
+  - sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-8 30
+  - sudo update-alternatives --set cc /usr/bin/gcc-8
+  - sudo update-alternatives --set gcc /usr/bin/gcc-8
 
 script:
   - cmake .
