@@ -5,18 +5,8 @@ dist: xenial
 
 
 before_install:
-  - sudo rm -f /etc/apt/sources.list.d/*
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -q
-  - sudo apt-get autoremove --purge gcc-5 g++-5
-  - sudo apt-get install -y cmake gcc-8 libinput-dev zlib1g-dev g++-8 libinput-tools libsystemd-dev
-
-before_script:
-  - export CC=gcc-8
-  - export CXX=g++-8
+  - docker build -t builder -f build.Dockerfile .
 
 script:
-  - env
-  - mkdir build && cd build
-  - cmake ..
-  - make -j$(nproc)
+  - docker run --rm --device /dev/input -v /run/udev/data:/run/udev/data -v $(pwd):/workdir -w /workdir -it debian cmake .
+  - docker run --rm --device /dev/input -v /run/udev/data:/run/udev/data -v $(pwd):/workdir -w /workdir -it debian make
