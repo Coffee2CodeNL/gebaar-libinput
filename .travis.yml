@@ -3,19 +3,20 @@ compiler: gcc
 os: linux
 dist: xenial
 
+
 before_install:
   - sudo rm -f /etc/apt/sources.list.d/*
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -q
-  - sudo apt-get remove gcc-5
-  - sudo apt-get install -y cmake gcc-8 libinput-dev zlib1g-dev
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 10
-  - sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-8 30
-  - sudo update-alternatives --set cc /usr/bin/gcc-8
-  - sudo update-alternatives --set gcc /usr/bin/gcc-8
-  - gcc --version
+  - sudo apt-get autoremove --purge gcc-5 g++-5
+  - sudo apt-get install -y cmake gcc-8 libinput-dev zlib1g-dev g++-8 libinput-tools libsystemd-dev
+
+before_script:
+  - export CC=gcc-8
+  - export CXX=g++-8
 
 script:
-  - gcc --version
-  - cmake .
+  - env
+  - mkdir build && cd build
+  - cmake ..
   - make -j$(nproc)
