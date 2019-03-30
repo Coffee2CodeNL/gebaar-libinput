@@ -1,16 +1,14 @@
-compiler: gcc
+compiler: c
 
 os: linux
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - cmake
-      - gcc-8
-      - libinput-dev
-      - zlib1g-dev
+before_install:
+  - cat /etc/apt/sources.list
+  - ls -la && cat /etc/apt/sources.list.d/*.list
+  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -q
+  - sudo apt-get install -y cmake gcc-8 libinput-dev zlib1g-dev
 
 script:
   - cmake .
