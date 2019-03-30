@@ -3,10 +3,19 @@ compiler: gcc
 os: linux
 dist: xenial
 
-
 before_install:
   - docker build -t builder -f build.Dockerfile .
 
 script:
-  - docker run --rm --device /dev/input -v /run/udev/data:/run/udev/data -v $(pwd):/workdir -w /workdir -it debian cmake .
-  - docker run --rm --device /dev/input -v /run/udev/data:/run/udev/data -v $(pwd):/workdir -w /workdir -it debian make
+  - docker run --rm --device /dev/input -v /run/udev/data:/run/udev/data -v $(pwd):/workdir -w /workdir -it builder cmake .
+  - docker run --rm --device /dev/input -v /run/udev/data:/run/udev/data -v $(pwd):/workdir -w /workdir -it builder make
+
+deploy:
+  provider: releases
+  file: "gebaard"
+  skip_cleanup: true
+  on:
+    repo: Coffee2CodeNL/gebaar-libinput
+    tags: true
+  api_key:
+    secure: "<todo>"
