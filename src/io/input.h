@@ -74,6 +74,10 @@ namespace gebaar::io {
         void handle_swipe_event_without_coords(libinput_event_gesture* gev, bool begin);
 
         void handle_swipe_event_with_coords(libinput_event_gesture* gev);
+
+        int update_swipe_type_if_command_set(int swipe_type, int d, std::string commands[]);
+
+        std::string determine_command(double x, double y, std::string commands[]);
     };
 }
 
