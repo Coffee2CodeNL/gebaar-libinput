@@ -74,6 +74,8 @@ namespace gebaar::io {
         void handle_swipe_event_without_coords(libinput_event_gesture* gev, bool begin);
 
         void handle_swipe_event_with_coords(libinput_event_gesture* gev);
+
+        void handle_pinch_event(libinput_event_gesture* gev);
     };
 }
 
