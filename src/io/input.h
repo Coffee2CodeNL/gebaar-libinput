@@ -44,6 +44,8 @@ namespace gebaar::io {
     private:
         std::shared_ptr<gebaar::config::Config> config;
 
+        bool has_received_updates;
+
         struct libinput* libinput;
         struct libinput_event* libinput_event;
         struct udev* udev;
