@@ -55,6 +55,10 @@ right_down = ""
 down = ""
 left = ""
 right = ""
+
+[commands.pinch]
+in = ""
+out = ""
 ```
 
 ### Repository versions
@@ -77,6 +81,7 @@ down = "bspc node -f south"
 left = "bspc node -f west"
 right = "bspc node -f east"
 
+
 [commands.swipe.four]
 left_up = ""
 right_up = ""
@@ -86,6 +91,10 @@ right_down = ""
 down = ""
 left = "bspc desktop -f prev"
 right = "bspc desktop -f next"
+
+[commands.pinch]
+in = "xdotool key Control_L+equal"
+out = "xdotool key Control_L+minus"
 ```
 
 Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
@@ -93,9 +102,12 @@ Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
 ### State of the project
 
 - [x] Receiving swipe events from libinput
-- [ ] Receiving pinch/zoom events from libinput
+- [x] Receiving pinch/zoom events from libinput
+  - [ ] Support continous pinch
+  - [ ] Support pinch-and-rotate gestures
 - [ ] Receiving rotation events from libinput
 - [x] Converting libinput events to motions
 - [x] Running commands based on motions
 - [x] Refactor code to be up to Release standards, instead of testing-hell
+
 

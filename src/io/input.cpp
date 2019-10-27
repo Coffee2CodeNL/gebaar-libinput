@@ -1,17 +1,17 @@
 /*
     gebaar
     Copyright (C) 2019   coffee2code
-    
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -40,6 +40,43 @@ bool gebaar::io::Input::initialize_context()
     udev = udev_new();
     libinput = libinput_udev_create_context(&libinput_interface, nullptr, udev);
     return libinput_udev_assign_seat(libinput, "seat0")==0;
+}
+
+
+
+/**
+ * Pinch Gesture
+ * Currently supporting only "one shot" pinch-in and pinch-out gestures.
+ * @param gev Gesture Event
+ * @param begin Boolean to denote begin or continuation of gesture.
+ **/
+void gebaar::io::Input::handle_pinch_event(libinput_event_gesture* gev, bool begin)
+{
+    if (begin) {
+        gesture_pinch_event.fingers = libinput_event_gesture_get_finger_count(gev);
+        // Reset pinch data
+        gesture_pinch_event.scale = 1.0;
+        gesture_pinch_event.executed = false;
+    }
+    else {
+        if (gesture_pinch_event.executed) return;
+        double new_scale = libinput_event_gesture_get_scale(gev);
+        if (new_scale > gesture_pinch_event.scale) {
+        // Scale up
+            if (gesture_pinch_event.scale * new_scale > 1.5) {
+                std::system(config->pinch_commands[0].c_str());
+                gesture_pinch_event.executed = true;
+            }
+        }
+        else {
+            // Scale Down
+            if (gesture_pinch_event.scale * new_scale < 0.5) {
+                std::system(config->pinch_commands[1].c_str());
+                gesture_pinch_event.executed = true;
+            }
+        }
+        gesture_pinch_event.scale = new_scale;
+    }
 }
 
 /**
@@ -169,6 +206,15 @@ void gebaar::io::Input::handle_event()
         case LIBINPUT_EVENT_GESTURE_SWIPE_END:
             handle_swipe_event_without_coords(libinput_event_get_gesture_event(libinput_event), false);
             break;
+        case LIBINPUT_EVENT_GESTURE_PINCH_BEGIN:
+            handle_pinch_event(libinput_event_get_gesture_event(libinput_event), true);
+            break;
+        case LIBINPUT_EVENT_GESTURE_PINCH_UPDATE:
+            handle_pinch_event(libinput_event_get_gesture_event(libinput_event), false);
+            break;
+        case LIBINPUT_EVENT_GESTURE_PINCH_END:
+            handle_pinch_event(libinput_event_get_gesture_event(libinput_event), false);
+            break;
         case LIBINPUT_EVENT_NONE:
             break;
         case LIBINPUT_EVENT_DEVICE_ADDED:
@@ -208,12 +254,6 @@ void gebaar::io::Input::handle_event()
         case LIBINPUT_EVENT_TABLET_PAD_RING:
             break;
         case LIBINPUT_EVENT_TABLET_PAD_STRIP:
-            break;
-        case LIBINPUT_EVENT_GESTURE_PINCH_BEGIN:
-            break;
-        case LIBINPUT_EVENT_GESTURE_PINCH_UPDATE:
-            break;
-        case LIBINPUT_EVENT_GESTURE_PINCH_END:
             break;
         case LIBINPUT_EVENT_SWITCH_TOGGLE:
             break;
