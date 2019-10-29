@@ -33,6 +33,9 @@ namespace gebaar::config {
 
         void load_config();
 
+
+        enum pinches {PINCH_IN, PINCH_OUT, DISTANCE};
+
         std::string swipe_three_commands[10];
         std::string swipe_four_commands[10];
         std::string pinch_commands[10];

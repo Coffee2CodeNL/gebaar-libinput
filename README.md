@@ -59,7 +59,12 @@ right = ""
 [commands.pinch]
 in = ""
 out = ""
+distance=""
 ```
+
+* `distance` variable in `commands.pinch` sets the distance between fingers where it shold trigger.
+  Defaults to `0.5` which means fingers should travel exactly half way from their initial position.
+
 
 ### Repository versions
 
@@ -95,6 +100,7 @@ right = "bspc desktop -f next"
 [commands.pinch]
 in = "xdotool key Control_L+equal"
 out = "xdotool key Control_L+minus"
+ditance="0.1"
 ```
 
 Add `gebaard -b` to `~/.config/bspwm/bspwmrc`

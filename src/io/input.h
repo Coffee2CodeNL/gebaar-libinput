@@ -24,6 +24,10 @@
 #include <zconf.h>
 #include "../config/config.h"
 
+#define DEFAULT_SCALE    1.0
+#define DEFAULT_DISTANCE 0.5
+
+
 namespace gebaar::io {
     struct gesture_swipe_event {
         int fingers;
@@ -35,6 +39,8 @@ namespace gebaar::io {
         int fingers;
         double scale;
         double angle;
+
+        double distance;
         bool executed;
     };
 
