@@ -28,6 +28,7 @@ gebaar::io::Input::Input(std::shared_ptr<gebaar::config::Config> const& config_p
 {
     config = config_ptr;
     gesture_swipe_event = {};
+    gesture_pinch_event = {};
 }
 
 /**
@@ -54,24 +55,35 @@ void gebaar::io::Input::handle_pinch_event(libinput_event_gesture* gev, bool beg
 {
     if (begin) {
         gesture_pinch_event.fingers = libinput_event_gesture_get_finger_count(gev);
+        // Get pinch distance
+        try {
+          gesture_pinch_event.distance = std::stod(config->pinch_commands[config->DISTANCE]);
+        }
+        catch (const std::invalid_argument &ia) {
+          // Set default distance
+          gesture_pinch_event.distance = DEFAULT_DISTANCE;
+        }
         // Reset pinch data
-        gesture_pinch_event.scale = 1.0;
+        gesture_pinch_event.scale = DEFAULT_SCALE;
         gesture_pinch_event.executed = false;
     }
     else {
+        // Ignore input after command execution
         if (gesture_pinch_event.executed) return;
         double new_scale = libinput_event_gesture_get_scale(gev);
         if (new_scale > gesture_pinch_event.scale) {
-        // Scale up
-            if (gesture_pinch_event.scale * new_scale > 1.5) {
-                std::system(config->pinch_commands[0].c_str());
+            // Scale up
+            // Add 1 to required distance to get 2 > x > 1
+            if (new_scale > 1 + gesture_pinch_event.distance) {
+                std::system(config->pinch_commands[config->PINCH_IN].c_str());
                 gesture_pinch_event.executed = true;
             }
         }
         else {
             // Scale Down
-            if (gesture_pinch_event.scale * new_scale < 0.5) {
-                std::system(config->pinch_commands[1].c_str());
+            // Substract from 1 to have inverted value for pinch in gesture
+            if (gesture_pinch_event.scale < 1 - gesture_pinch_event.distance) {
+                std::system(config->pinch_commands[config->PINCH_OUT].c_str());
                 gesture_pinch_event.executed = true;
             }
         }
