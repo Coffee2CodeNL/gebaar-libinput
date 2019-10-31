@@ -114,6 +114,7 @@ Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
 ### State of the project
 
 - [x] Receiving swipe events from libinput
+- [x] Swipe gesture have trigger treshold
 - [x] Receiving pinch/zoom events from libinput
   - [ ] Support continous pinch
   - [ ] Support pinch-and-rotate gestures
