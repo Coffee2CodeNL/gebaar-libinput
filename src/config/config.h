@@ -35,7 +35,7 @@ namespace gebaar::config {
 
 
         enum pinch {PINCH_IN, PINCH_OUT};
-        enum settings {THRESHOLD, DISTANCE};
+        enum settings {SWIPE_THRESHOLD, PINCH_THRESHOLD};
 
         std::string swipe_three_commands[10];
         std::string swipe_four_commands[10];
