@@ -59,12 +59,15 @@ right = ""
 [commands.pinch]
 in = ""
 out = ""
-distance=""
+
+[settings]
+pinch.distance = ""
+swipe.threshold = ""
 ```
 
-* `distance` variable in `commands.pinch` sets the distance between fingers where it shold trigger.
+* `settings.pinch.distance` key sets the distance between fingers where it shold trigger.
   Defaults to `0.5` which means fingers should travel exactly half way from their initial position.
-
+* `settings.swipe.threshold` sets the limit when swipe gesture should be executed. Defaults to 100.
 
 ### Repository versions
 
@@ -100,7 +103,10 @@ right = "bspc desktop -f next"
 [commands.pinch]
 in = "xdotool key Control_L+equal"
 out = "xdotool key Control_L+minus"
-ditance="0.1"
+
+[settings]
+pinch.ditance="0.5"
+swipe.threshold = "100"
 ```
 
 Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
