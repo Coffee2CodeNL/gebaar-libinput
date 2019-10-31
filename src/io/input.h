@@ -24,8 +24,9 @@
 #include <zconf.h>
 #include "../config/config.h"
 
-#define DEFAULT_SCALE    1.0
-#define DEFAULT_DISTANCE 0.5
+#define DEFAULT_SCALE     1.0
+#define DEFAULT_DISTANCE  0.5
+#define DEFAULT_THRESHOLD 100
 
 
 namespace gebaar::io {
@@ -33,6 +34,9 @@ namespace gebaar::io {
         int fingers;
         double x;
         double y;
+
+        int threshold;
+        bool executed;
     };
 
     struct gesture_pinch_event {
@@ -85,9 +89,17 @@ namespace gebaar::io {
 
         void handle_event();
 
+        /* Swipe event */
+        void reset_swipe_event();
+
         void handle_swipe_event_without_coords(libinput_event_gesture* gev, bool begin);
 
         void handle_swipe_event_with_coords(libinput_event_gesture* gev);
+
+        void trigger_swipe_command();
+
+        /* Pinch event */
+        void reset_pinch_event();
 
         void handle_pinch_event(libinput_event_gesture* gev, bool begin);
 

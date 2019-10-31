@@ -43,6 +43,35 @@ bool gebaar::io::Input::initialize_context()
     return libinput_udev_assign_seat(libinput, "seat0")==0;
 }
 
+/**
+ * Reset swipe event struct to defaults
+ */
+void gebaar::io::Input::reset_swipe_event() {
+    gesture_swipe_event = {};
+    try {
+        gesture_swipe_event.threshold = std::stoi(config->settings[config->THRESHOLD]);
+    }
+    catch (const std::invalid_argument& ia){
+        gesture_swipe_event.threshold = DEFAULT_THRESHOLD;
+    }
+}
+
+/**
+ * Reset pinch event struct to defaults
+ */
+void gebaar::io::Input::reset_pinch_event() {
+        // Get pinch distance
+        try {
+          gesture_pinch_event.distance = std::stod(config->settings[config->DISTANCE]);
+        }
+        catch (const std::invalid_argument &ia) {
+          // Set default distance
+          gesture_pinch_event.distance = DEFAULT_DISTANCE;
+        }
+        // Reset pinch data
+        gesture_pinch_event.scale = DEFAULT_SCALE;
+        gesture_pinch_event.executed = false;
+}
 
 
 /**
@@ -54,20 +83,12 @@ bool gebaar::io::Input::initialize_context()
 void gebaar::io::Input::handle_pinch_event(libinput_event_gesture* gev, bool begin)
 {
     if (begin) {
-        gesture_pinch_event.fingers = libinput_event_gesture_get_finger_count(gev);
-        // Get pinch distance
-        try {
-          gesture_pinch_event.distance = std::stod(config->pinch_commands[config->DISTANCE]);
-        }
-        catch (const std::invalid_argument &ia) {
-          // Set default distance
-          gesture_pinch_event.distance = DEFAULT_DISTANCE;
-        }
-        // Reset pinch data
-        gesture_pinch_event.scale = DEFAULT_SCALE;
-        gesture_pinch_event.executed = false;
+      reset_pinch_event();
+      gesture_pinch_event.fingers = libinput_event_gesture_get_finger_count(gev);
     }
     else {
+        if (gesture_swipe_event.executed) return;
+
         // Ignore input after command execution
         if (gesture_pinch_event.executed) return;
         double new_scale = libinput_event_gesture_get_scale(gev);
@@ -104,41 +125,12 @@ void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture
     if (begin) {
         gesture_swipe_event.fingers = libinput_event_gesture_get_finger_count(gev);
     }
+    // This executed when fingers left the touchpad
     else {
-        double x = gesture_swipe_event.x;
-        double y = gesture_swipe_event.y;
-        int swipe_type = 5; // middle = no swipe
-                           // 1 = left_up, 2 = up, 3 = right_up...
-                           // 1 2 3
-                           // 4 5 6
-                           // 7 8 9
-        const double OBLIQUE_RATIO = 0.414; // =~ tan(22.5);
-
-        if (abs(x) > abs(y)) {
-            // left or right swipe
-            swipe_type += x < 0 ? -1 : 1;
-
-            // check for oblique swipe
-            if (abs(y) / abs(x) > OBLIQUE_RATIO) {
-                swipe_type += y < 0 ? -3 : 3;
-            }
-        } else {
-            // up of down swipe
-            swipe_type += y < 0 ? -3 : 3;
-
-            // check for oblique swipe
-            if (abs(x) / abs(y) > OBLIQUE_RATIO) {
-                swipe_type += x < 0 ? -1 : 1;
-            }
+        if (!gesture_swipe_event.executed) {
+            trigger_swipe_command();
         }
-
-        if (gesture_swipe_event.fingers == 3) {
-            std::system(config->swipe_three_commands[swipe_type].c_str());
-        } else if (gesture_swipe_event.fingers == 4) {
-            std::system(config->swipe_four_commands[swipe_type].c_str());
-        }
-
-        gesture_swipe_event = {};
+        reset_swipe_event();
     }
 }
 
@@ -148,8 +140,50 @@ void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture
  */
 void gebaar::io::Input::handle_swipe_event_with_coords(libinput_event_gesture* gev)
 {
+    if (gesture_swipe_event.executed) return;
+    int threshold = std::stoi(config->settings[config->THRESHOLD]);
     gesture_swipe_event.x += libinput_event_gesture_get_dx(gev);
     gesture_swipe_event.y += libinput_event_gesture_get_dy(gev);
+    if (abs(gesture_swipe_event.x) > threshold || abs(gesture_swipe_event.y) > threshold) {
+       trigger_swipe_command();
+       gesture_swipe_event.executed = true;
+    }
+}
+
+void gebaar::io::Input::trigger_swipe_command() {
+  double x = gesture_swipe_event.x;
+  double y = gesture_swipe_event.y;
+  int swipe_type = 5; // middle = no swipe
+                     // 1 = left_up, 2 = up, 3 = right_up...
+                     // 1 2 3
+                     // 4 5 6
+                     // 7 8 9
+  const double OBLIQUE_RATIO = 0.414; // =~ tan(22.5);
+
+  if (abs(x) > abs(y)) {
+      // left or right swipe
+      swipe_type += x < 0 ? -1 : 1;
+
+      // check for oblique swipe
+      if (abs(y) / abs(x) > OBLIQUE_RATIO) {
+          swipe_type += y < 0 ? -3 : 3;
+      }
+  } else {
+      // up of down swipe
+      swipe_type += y < 0 ? -3 : 3;
+
+      // check for oblique swipe
+      if (abs(x) / abs(y) > OBLIQUE_RATIO) {
+          swipe_type += x < 0 ? -1 : 1;
+      }
+  }
+
+  if (gesture_swipe_event.fingers == 3) {
+      std::system(config->swipe_three_commands[swipe_type].c_str());
+  } else if (gesture_swipe_event.fingers == 4) {
+      std::system(config->swipe_four_commands[swipe_type].c_str());
+  }
+
 }
 
 /**

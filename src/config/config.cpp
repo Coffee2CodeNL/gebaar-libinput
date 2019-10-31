@@ -63,7 +63,9 @@ void gebaar::config::Config::load_config()
 
             pinch_commands[PINCH_IN] = *config->get_qualified_as<std::string>("commands.pinch.out");
             pinch_commands[PINCH_OUT] = *config->get_qualified_as<std::string>("commands.pinch.in");
-            pinch_commands[DISTANCE] = *config->get_qualified_as<std::string>("commands.pinch.distance");
+
+            settings[DISTANCE] = *config->get_qualified_as<std::string>("settings.pinch.distance");
+            settings[THRESHOLD] = *config->get_qualified_as<std::string>("settings.swipe.threshold");
 
             loaded = true;
         }
