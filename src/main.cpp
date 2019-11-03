@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
     }
     std::shared_ptr<gebaar::config::Config> config = std::make_shared<gebaar::config::Config>();
     input = new gebaar::io::Input(config);
+
     if (input->initialize()) {
         input->start_loop();
     }

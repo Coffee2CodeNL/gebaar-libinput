@@ -43,29 +43,37 @@ void gebaar::config::Config::load_config()
                 std::cerr << e.what() << std::endl;
                 exit(EXIT_FAILURE);
             }
-            swipe_three_commands[1] = *config->get_qualified_as<std::string>("commands.swipe.three.left_up");
-            swipe_three_commands[2] = *config->get_qualified_as<std::string>("commands.swipe.three.up");
-            swipe_three_commands[3] = *config->get_qualified_as<std::string>("commands.swipe.three.right_up");
-            swipe_three_commands[4] = *config->get_qualified_as<std::string>("commands.swipe.three.left");
-            swipe_three_commands[6] = *config->get_qualified_as<std::string>("commands.swipe.three.right");
-            swipe_three_commands[7] = *config->get_qualified_as<std::string>("commands.swipe.three.left_down");
-            swipe_three_commands[8] = *config->get_qualified_as<std::string>("commands.swipe.three.down");
-            swipe_three_commands[9] = *config->get_qualified_as<std::string>("commands.swipe.three.right_down");
 
-            swipe_four_commands[1] = *config->get_qualified_as<std::string>("commands.swipe.four.left_up");
-            swipe_four_commands[2] = *config->get_qualified_as<std::string>("commands.swipe.four.up");
-            swipe_four_commands[3] = *config->get_qualified_as<std::string>("commands.swipe.four.right_up");
-            swipe_four_commands[4] = *config->get_qualified_as<std::string>("commands.swipe.four.left");
-            swipe_four_commands[6] = *config->get_qualified_as<std::string>("commands.swipe.four.right");
-            swipe_four_commands[7] = *config->get_qualified_as<std::string>("commands.swipe.four.left_down");
-            swipe_four_commands[8] = *config->get_qualified_as<std::string>("commands.swipe.four.down");
-            swipe_four_commands[9] = *config->get_qualified_as<std::string>("commands.swipe.four.right_down");
+            /* Swipe Settings */
+            swipe_three_commands[1] = *config->get_qualified_as<std::string>("swipe.commands.three.left_up");
+            swipe_three_commands[2] = *config->get_qualified_as<std::string>("swipe.commands.three.up");
+            swipe_three_commands[3] = *config->get_qualified_as<std::string>("swipe.commands.three.right_up");
+            swipe_three_commands[4] = *config->get_qualified_as<std::string>("swipe.commands.three.left");
+            swipe_three_commands[6] = *config->get_qualified_as<std::string>("swipe.commands.three.right");
+            swipe_three_commands[7] = *config->get_qualified_as<std::string>("swipe.commands.three.left_down");
+            swipe_three_commands[8] = *config->get_qualified_as<std::string>("swipe.commands.three.down");
+            swipe_three_commands[9] = *config->get_qualified_as<std::string>("swipe.commands.three.right_down");
 
-            pinch_commands[PINCH_IN] = *config->get_qualified_as<std::string>("commands.pinch.out");
-            pinch_commands[PINCH_OUT] = *config->get_qualified_as<std::string>("commands.pinch.in");
+            swipe_four_commands[1] = *config->get_qualified_as<std::string>("swipe.commands.four.left_up");
+            swipe_four_commands[2] = *config->get_qualified_as<std::string>("swipe.commands.four.up");
+            swipe_four_commands[3] = *config->get_qualified_as<std::string>("swipe.commands.four.right_up");
+            swipe_four_commands[4] = *config->get_qualified_as<std::string>("swipe.commands.four.left");
+            swipe_four_commands[6] = *config->get_qualified_as<std::string>("swipe.commands.four.right");
+            swipe_four_commands[7] = *config->get_qualified_as<std::string>("swipe.commands.four.left_down");
+            swipe_four_commands[8] = *config->get_qualified_as<std::string>("swipe.commands.four.down");
+            swipe_four_commands[9] = *config->get_qualified_as<std::string>("swipe.commands.four.right_down");
 
-            settings[PINCH_THRESHOLD] = *config->get_qualified_as<std::string>("settings.pinch.threshold");
-            settings[SWIPE_THRESHOLD] = *config->get_qualified_as<std::string>("settings.swipe.threshold");
+            settings.swipe_threshold = config->get_qualified_as<double>("swipe.settings.threshold").value_or(0.5);
+            settings.swipe_one_shot = config->get_qualified_as<bool>("swipe.settings.one_shot").value_or(true);
+            settings.swipe_trigger_on_release = config->get_qualified_as<bool>("swipe.settings.trigger_on_release").value_or(true);
+
+            /* Pinch settings */
+            pinch_commands[PINCH_IN] = *config->get_qualified_as<std::string>("pinch.commands.two.out");
+            pinch_commands[PINCH_OUT] = *config->get_qualified_as<std::string>("pinch.commands.two.in");
+
+            settings.pinch_threshold = config->get_qualified_as<double>("pinch.settings.threshold").value_or(0.25);
+            settings.pinch_one_shot = config->get_qualified_as<bool>("pinch.settings.one_shot").value_or(false);
+
 
             loaded = true;
         }

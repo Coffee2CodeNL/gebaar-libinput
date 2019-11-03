@@ -80,7 +80,7 @@ swipe.threshold = ""
 
 _~/.config/gebaar/gebaard.toml_
 ```toml
-[commands.swipe.three]
+[swipe.commands.three]
 left_up = ""
 right_up = ""
 up = "bspc node -f north"
@@ -91,7 +91,7 @@ left = "bspc node -f west"
 right = "bspc node -f east"
 
 
-[commands.swipe.four]
+[swipe.commands.four]
 left_up = ""
 right_up = ""
 up = "rofi -show combi"
@@ -101,13 +101,18 @@ down = ""
 left = "bspc desktop -f prev"
 right = "bspc desktop -f next"
 
-[commands.pinch]
+[pinch.commands.two]
 in = "xdotool key Control_L+equal"
 out = "xdotool key Control_L+minus"
 
-[settings]
-pinch.ditance="0.5"
-swipe.threshold = "100"
+[pinch.settings]
+threshold=0.25
+one_shot=false
+
+[swipe.settings]
+threshold = 0.5
+one_shot = true
+trigger_on_release = true
 ```
 
 Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
@@ -117,8 +122,8 @@ Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
 - [x] Receiving swipe events from libinput
 - [x] Swipe gesture have trigger treshold
 - [x] Receiving pinch/zoom events from libinput
-  - [ ] Support continous pinch
-  - [ ] Support pinch-and-rotate gestures
+- [x] Support continous pinch
+- [ ] Support pinch-and-rotate gestures
 - [ ] Receiving rotation events from libinput
 - [x] Converting libinput events to motions
 - [x] Running commands based on motions

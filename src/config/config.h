@@ -34,21 +34,31 @@ namespace gebaar::config {
         void load_config();
 
 
-        enum pinch {PINCH_IN, PINCH_OUT};
-        enum settings {SWIPE_THRESHOLD, PINCH_THRESHOLD};
+        struct settings {
+          bool pinch_one_shot;
+          double pinch_threshold;
 
+          bool swipe_one_shot;
+          double swipe_threshold;
+          bool swipe_trigger_on_release;
+        } settings;
+
+        enum pinch {PINCH_IN, PINCH_OUT};
         std::string swipe_three_commands[10];
         std::string swipe_four_commands[10];
         std::string pinch_commands[10];
-        std::string settings[10];
 
     private:
+
         bool config_file_exists();
 
         bool find_config_file();
 
+
         std::string config_file_path;
         std::shared_ptr<cpptoml::table> config;
+
+
     };
 }
 #endif //GEBAAR_CONFIG_H

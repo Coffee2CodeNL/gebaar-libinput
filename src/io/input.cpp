@@ -28,7 +28,9 @@ gebaar::io::Input::Input(std::shared_ptr<gebaar::config::Config> const& config_p
 {
     config = config_ptr;
     gesture_swipe_event = {};
+
     gesture_pinch_event = {};
+    gesture_pinch_event.scale = DEFAULT_SCALE;
 }
 
 /**
@@ -48,31 +50,60 @@ bool gebaar::io::Input::initialize_context()
  */
 void gebaar::io::Input::reset_swipe_event() {
     gesture_swipe_event = {};
-    try {
-        gesture_swipe_event.threshold = std::stoi(config->settings[config->THRESHOLD]);
-    }
-    catch (const std::invalid_argument& ia){
-        gesture_swipe_event.threshold = DEFAULT_THRESHOLD;
-    }
+    gesture_swipe_event.executed = false;
 }
 
 /**
  * Reset pinch event struct to defaults
  */
 void gebaar::io::Input::reset_pinch_event() {
-        // Get pinch distance
-        try {
-          gesture_pinch_event.distance = std::stod(config->settings[config->DISTANCE]);
-        }
-        catch (const std::invalid_argument &ia) {
-          // Set default distance
-          gesture_pinch_event.distance = DEFAULT_DISTANCE;
-        }
-        // Reset pinch data
-        gesture_pinch_event.scale = DEFAULT_SCALE;
-        gesture_pinch_event.executed = false;
+    gesture_pinch_event = {};
+    gesture_pinch_event.scale = DEFAULT_SCALE;
+    gesture_pinch_event.executed = false;
 }
 
+/**
+ * Pinch one_shot gesture handle
+ * @param new_scale last reported scale between the fingers
+ */
+void gebaar::io::Input::handle_one_shot_pinch(double new_scale) {
+    if (new_scale > gesture_pinch_event.scale) { // Scale up
+        // Add 1 to required distance to get 2 > x > 1
+        if (new_scale > 1 + config->settings.pinch_threshold) {
+            std::system(config->pinch_commands[config->PINCH_IN].c_str());
+            gesture_pinch_event.executed = true;
+        }
+    }
+    else { // Scale Down
+        // Substract from 1 to have inverted value for pinch in gesture
+        if (gesture_pinch_event.scale < 1 - config->settings.pinch_threshold) {
+            std::system(config->pinch_commands[config->PINCH_OUT].c_str());
+            gesture_pinch_event.executed = true;
+        }
+    }
+}
+
+/**
+ * Pinch continous gesture handle
+ * Calculates the trigger value according to current step
+ * @param new_scale last reported scale between the fingers
+ */
+void gebaar::io::Input::handle_continouos_pinch(double new_scale) {
+    int step = gesture_pinch_event.step == 0 ?  gesture_pinch_event.step + 1 : gesture_pinch_event.step;
+    double trigger = 1 + (config->settings.pinch_threshold * step);
+
+    if (new_scale > gesture_pinch_event.scale) { // Scale up
+        if (new_scale >= trigger){
+            std::system(config->pinch_commands[config->PINCH_IN].c_str());
+            inc_step(gesture_pinch_event.step);
+        }
+    } else { // Scale down
+        if (new_scale <= trigger){
+            std::system(config->pinch_commands[config->PINCH_OUT].c_str());
+            dec_step(gesture_pinch_event.step);
+        }
+    }
+}
 
 /**
  * Pinch Gesture
@@ -83,31 +114,13 @@ void gebaar::io::Input::reset_pinch_event() {
 void gebaar::io::Input::handle_pinch_event(libinput_event_gesture* gev, bool begin)
 {
     if (begin) {
-      reset_pinch_event();
-      gesture_pinch_event.fingers = libinput_event_gesture_get_finger_count(gev);
+        reset_pinch_event();
+        gesture_pinch_event.fingers = libinput_event_gesture_get_finger_count(gev);
     }
     else {
-        if (gesture_swipe_event.executed) return;
-
-        // Ignore input after command execution
-        if (gesture_pinch_event.executed) return;
         double new_scale = libinput_event_gesture_get_scale(gev);
-        if (new_scale > gesture_pinch_event.scale) {
-            // Scale up
-            // Add 1 to required distance to get 2 > x > 1
-            if (new_scale > 1 + gesture_pinch_event.distance) {
-                std::system(config->pinch_commands[config->PINCH_IN].c_str());
-                gesture_pinch_event.executed = true;
-            }
-        }
-        else {
-            // Scale Down
-            // Substract from 1 to have inverted value for pinch in gesture
-            if (gesture_pinch_event.scale < 1 - gesture_pinch_event.distance) {
-                std::system(config->pinch_commands[config->PINCH_OUT].c_str());
-                gesture_pinch_event.executed = true;
-            }
-        }
+        if (config->settings.pinch_one_shot && !gesture_pinch_event.executed) handle_one_shot_pinch(new_scale);
+        if (!config->settings.pinch_one_shot) handle_continouos_pinch(new_scale);
         gesture_pinch_event.scale = new_scale;
     }
 }
@@ -127,7 +140,7 @@ void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture
     }
     // This executed when fingers left the touchpad
     else {
-        if (!gesture_swipe_event.executed) {
+        if (!gesture_swipe_event.executed && config->settings.swipe_trigger_on_release) {
             trigger_swipe_command();
         }
         reset_swipe_event();
@@ -140,8 +153,10 @@ void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture
  */
 void gebaar::io::Input::handle_swipe_event_with_coords(libinput_event_gesture* gev)
 {
-    if (gesture_swipe_event.executed) return;
-    int threshold = std::stoi(config->settings[config->THRESHOLD]);
+    if (config->settings.swipe_one_shot && gesture_swipe_event.executed) return;
+
+    // Since swipe gesture counts in dpi we have to convert
+    int threshold = config->settings.swipe_threshold * 100;
     gesture_swipe_event.x += libinput_event_gesture_get_dx(gev);
     gesture_swipe_event.y += libinput_event_gesture_get_dy(gev);
     if (abs(gesture_swipe_event.x) > threshold || abs(gesture_swipe_event.y) > threshold) {
@@ -150,6 +165,11 @@ void gebaar::io::Input::handle_swipe_event_with_coords(libinput_event_gesture* g
     }
 }
 
+
+/**
+ * Making calculation for swipe direction and triggering
+ * command accordingly
+ */
 void gebaar::io::Input::trigger_swipe_command() {
   double x = gesture_swipe_event.x;
   double y = gesture_swipe_event.y;
@@ -223,7 +243,8 @@ gebaar::io::Input::~Input()
 bool gebaar::io::Input::gesture_device_exists()
 {
     bool device_found = false;
-    while ((libinput_event = libinput_get_event(libinput))!=nullptr) {
+
+    while ((libinput_event = libinput_get_event(libinput)) != nullptr) {
         auto device = libinput_event_get_device(libinput_event);
         if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_GESTURE)) {
             device_found = true;

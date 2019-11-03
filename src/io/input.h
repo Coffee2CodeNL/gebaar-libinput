@@ -24,10 +24,7 @@
 #include <zconf.h>
 #include "../config/config.h"
 
-#define DEFAULT_SCALE     1.0
-#define DEFAULT_DISTANCE  0.5
-#define DEFAULT_THRESHOLD 100
-
+#define DEFAULT_SCALE           1.0
 
 namespace gebaar::io {
     struct gesture_swipe_event {
@@ -35,8 +32,8 @@ namespace gebaar::io {
         double x;
         double y;
 
-        int threshold;
         bool executed;
+        int step;
     };
 
     struct gesture_pinch_event {
@@ -44,8 +41,8 @@ namespace gebaar::io {
         double scale;
         double angle;
 
-        double distance;
         bool executed;
+        int step;
     };
 
     class Input {
@@ -64,6 +61,7 @@ namespace gebaar::io {
         struct libinput* libinput;
         struct libinput_event* libinput_event;
         struct udev* udev;
+
         struct gesture_swipe_event gesture_swipe_event;
         struct gesture_pinch_event gesture_pinch_event;
 
@@ -74,7 +72,7 @@ namespace gebaar::io {
         static int open_restricted(const char* path, int flags, void* user_data)
         {
             int fd = open(path, flags);
-            return fd<0 ? -errno : fd;
+            return fd < 0 ? -errno : fd;
         }
 
         static void close_restricted(int fd, void* user_data)
@@ -86,6 +84,18 @@ namespace gebaar::io {
                 .open_restricted = open_restricted,
                 .close_restricted = close_restricted,
         };
+
+        /*
+         * Decrements step of current trigger. Just to skip 0
+         * @param cur current step
+         */
+        inline void dec_step(int &cur) { --cur == 0 ? --cur : cur; }
+
+        /*
+         * Increase step of current trigger. Just to pass -1
+         * @param cur current step
+         */
+        inline void inc_step(int &cur) { ++cur == 0 ? ++cur : cur; }
 
         void handle_event();
 
@@ -100,6 +110,10 @@ namespace gebaar::io {
 
         /* Pinch event */
         void reset_pinch_event();
+
+        void handle_one_shot_pinch(double new_scale);
+
+        void handle_continouos_pinch(double new_scale);
 
         void handle_pinch_event(libinput_event_gesture* gev, bool begin);
 
