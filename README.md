@@ -1,7 +1,5 @@
 Gebaar
 =========
-Forked from Coffee2CodeNL/gebaar-libinput since original repo unmaintained for half a year.
-
 WM Independent Touchpad Gesture Daemon for libinput
 
 _Gebaar means Gesture in Dutch_
