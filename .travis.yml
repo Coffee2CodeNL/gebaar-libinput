@@ -15,5 +15,5 @@ deploy:
   file: "gebaard"
   skip_cleanup: true
   on:
-    repo: Osleg/gebaar-libinput
+    repo: osleg/gebaar-libinput
     tags: true
