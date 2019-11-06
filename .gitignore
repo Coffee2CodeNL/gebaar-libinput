@@ -195,3 +195,7 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
+# LSP stuff
+.ccls*
+.clangd
+
