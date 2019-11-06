@@ -15,7 +15,5 @@ deploy:
   file: "gebaard"
   skip_cleanup: true
   on:
-    repo: Coffee2CodeNL/gebaar-libinput
+    repo: Osleg/gebaar-libinput
     tags: true
-  api_key:
-    secure: "<todo>"
