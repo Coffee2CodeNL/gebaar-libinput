@@ -40,7 +40,7 @@ Click to join: [![Discord](https://img.shields.io/discord/548978799136473106.svg
 14. Reboot and see the magic
 
 ```toml
-[commands.swipe.three]
+[swipe.commands.three]
 left_up = ""
 right_up = ""
 up = ""
@@ -50,7 +50,7 @@ down = ""
 left = ""
 right = ""
 
-[commands.swipe.four]
+[swipe.commands.four]
 left_up = ""
 right_up = ""
 up = ""
@@ -60,18 +60,24 @@ down = ""
 left = ""
 right = ""
 
-[commands.pinch]
+[pinch.commands]
 in = ""
 out = ""
 
-[settings]
-pinch.distance = ""
-swipe.threshold = ""
+[pinch.settings]
+threshold = 0.25
+one_shot = false
+
+
+[swipe.settings]
+threshold = 0.5
+one_shot = true
+trigger_on_release = false
 ```
 
-* `settings.pinch.distance` key sets the distance between fingers where it shold trigger.
-  Defaults to `0.5` which means fingers should travel exactly half way from their initial position.
-* `settings.swipe.threshold` sets the limit when swipe gesture should be executed. Defaults to 100.
+* `pinch.settings.threshold` key sets the distance between fingers where it shold trigger.
+  Defaults to `0.25` which means fingers should travel exactly 25% distance from their initial position.
+* `swipe.settings.threshold` sets the limit when swipe gesture should be executed. Defaults to 0.5.
 
 ### Repository versions
 
@@ -115,7 +121,7 @@ one_shot=false
 [swipe.settings]
 threshold = 0.5
 one_shot = true
-trigger_on_release = true
+trigger_on_release = false
 ```
 
 Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
