@@ -25,6 +25,8 @@
 #include "../config/config.h"
 
 #define DEFAULT_SCALE           1.0
+#define SWIPE_X_THRESHOLD       1000
+#define SWIPE_Y_THRESHOLD       500
 
 namespace gebaar::io {
     struct gesture_swipe_event {
