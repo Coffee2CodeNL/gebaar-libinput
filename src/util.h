@@ -22,7 +22,7 @@
 #include <string>
 
 namespace gebaar::util {
-    std::string stringFromCharArray(char* charArr);
+std::string stringFromCharArray(char *charArr);
 }
 
 #endif // UTIL_H

@@ -21,44 +21,40 @@
 
 #include <cpptoml.h>
 #include <filesystem>
-#include <pwd.h>
 #include <iostream>
+#include <pwd.h>
 
 namespace gebaar::config {
-    class Config {
-    public:
-        Config();
+class Config {
+public:
+  Config();
 
-        bool loaded = false;
+  bool loaded = false;
 
-        void load_config();
+  void load_config();
 
+  struct settings {
+    bool pinch_one_shot;
+    double pinch_threshold;
 
-        struct settings {
-          bool pinch_one_shot;
-          double pinch_threshold;
+    bool swipe_one_shot;
+    double swipe_threshold;
+    bool swipe_trigger_on_release;
+  } settings;
 
-          bool swipe_one_shot;
-          double swipe_threshold;
-          bool swipe_trigger_on_release;
-        } settings;
+  enum pinch { PINCH_IN, PINCH_OUT };
+  std::string swipe_three_commands[10];
+  std::string swipe_four_commands[10];
+  std::string pinch_commands[10];
 
-        enum pinch {PINCH_IN, PINCH_OUT};
-        std::string swipe_three_commands[10];
-        std::string swipe_four_commands[10];
-        std::string pinch_commands[10];
+private:
+  bool config_file_exists();
 
-    private:
+  bool find_config_file();
 
-        bool config_file_exists();
+  std::string config_file_path;
+  std::shared_ptr<cpptoml::table> config;
+};
+} // namespace gebaar::config
 
-        bool find_config_file();
-
-
-        std::string config_file_path;
-        std::shared_ptr<cpptoml::table> config;
-
-
-    };
-}
-#endif //GEBAAR_CONFIG_H
+#endif // GEBAAR_CONFIG_H

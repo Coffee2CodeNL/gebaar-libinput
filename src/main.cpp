@@ -16,42 +16,43 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#include <libinput.h>
-#include <cxxopts.hpp>
 #include "config/config.h"
-#include "io/input.h"
 #include "daemonizer.h"
+#include "io/input.h"
+#include <cxxopts.hpp>
+#include <libinput.h>
 
-gebaar::io::Input* input;
+gebaar::io::Input *input;
 
-int main(int argc, char* argv[])
-{
-    cxxopts::Options options(argv[0], "Gebaard Gestures Daemon");
+int main(int argc, char *argv[]) {
+  cxxopts::Options options(argv[0], "Gebaard Gestures Daemon");
 
-    bool should_daemonize = false;
+  bool should_daemonize = false;
 
-    options.add_options()
-            ("b,background", "Daemonize", cxxopts::value(should_daemonize))
-            ("h,help", "Prints this help text");
+  options.add_options()
+    ("b,background", "Daemonize", cxxopts::value(should_daemonize))
+    ("h,help", "Prints this help text");
 
-    auto result = options.parse(argc, argv);
+  auto result = options.parse(argc, argv);
 
-    if (result.count("help")) {
-        std::cout << options.help() << std::endl;
-        exit(EXIT_SUCCESS);
-    }
+  if (result.count("help")) {
+    std::cout << options.help() << std::endl;
+    exit(EXIT_SUCCESS);
+  }
 
-    if (should_daemonize) {
-        auto *daemonizer = new gebaar::daemonizer::Daemonizer();
-        daemonizer->daemonize();
-    }
-    std::shared_ptr<gebaar::config::Config> config = std::make_shared<gebaar::config::Config>();
-    input = new gebaar::io::Input(config);
+  if (should_daemonize) {
+    auto *daemonizer = new gebaar::daemonizer::Daemonizer();
+    daemonizer->daemonize();
+  }
 
-    if (input->initialize()) {
-        input->start_loop();
-    }
+  std::shared_ptr<gebaar::config::Config> config =
+    std::make_shared<gebaar::config::Config>();
 
-    return 0;
+  input = new gebaar::io::Input(config);
+
+  if (input->initialize()) {
+    input->start_loop();
+  }
+
+  return 0;
 }
