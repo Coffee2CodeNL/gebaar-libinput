@@ -1,9 +1,5 @@
-
-[![Build Status](https://travis-ci.org/osleg/gebaar-libinput.svg?branch=master)](https://travis-ci.org/osleg/gebaar-libinput)
-
 Gebaar
 =========
-Forked from Coffee2CodeNL/gebaar-libinput since original repo unmaintained for half a year, yet this is NOT OFFICIAL repo!
 
 WM Independent Touchpad Gesture Daemon for libinput
 
