@@ -1,18 +1,18 @@
 # Maintainer: Alex Zaslavsky <alex@wall-dev.org>
 
-pkgname=gebaar-libinput-fork
+pkgname=gebaar-libinput
 pkgver=0.1.4
 pkgrel=1
-pkgdesc='A Super Simple WM Independent Touchpad Gesture Daemon for libinput. Forked version with new features'
+pkgdesc='A Super Simple WM Independent Touchpad Gesture Daemon for libinput.'
 arch=('x86_64')
-url="https://github.com/Osleg/$pkgname"
+url="https://github.com/Coffee2CodeNL/$pkgname"
 license=('GPL3')
 depends=('libinput')
 conflicts=('gebaar')
 provides=('gebaar')
-source=('https://github.com/osleg/gebaar-libinput-fork/releases/download/v0.1.4/gebaard'
-  'https://raw.githubusercontent.com/osleg/gebaar-libinput-fork/master/LICENSE'
-  'https://raw.githubusercontent.com/osleg/gebaar-libinput-fork/master/README.md')
+source=('https://github.com/Coffee2CodeNL/gebaar-libinput/releases/download/v0.1.4/gebaard'
+  'https://raw.githubusercontent.com/Coffee2CodeNL/gebaar-libinput/master/LICENSE'
+  'https://raw.githubusercontent.com/Coffee2CodeNL/gebaar-libinput/master/README.md')
 md5sums=('74efb11da5bb1714e114e6305d999186'
   'SKIP'
   'SKIP')
