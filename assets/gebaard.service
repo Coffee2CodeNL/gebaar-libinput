@@ -1,0 +1,10 @@
+[Unit]
+Description=Gebaar Daemon
+Documentation=https://github.com/Coffee2CodeNL/gebaar-libinput
+
+[Service]
+ExecStart=/usr/local/bin/gebaard
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
