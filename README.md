@@ -122,6 +122,30 @@ trigger_on_release = false
 
 Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
 
+**KDE Plasma 5**
+
+Any multiword value (like in some qdbus commands) must have escaped double quotes to work (`\"`).
+
+Additionally, in some distros (like openSUSE), the `qdbus` command might be named `qdbus-qt5`.
+Some navigation-related qdbus commands are provided directly by KWin and can be seen via `qdbus org.kde.KWin /KWin`,
+but most shortcuts can be checked with `qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.shortcutNames`.
+
+For Wayland users, a tool similar to `xdotool` in functionality is [ydotool](https://github.com/ReimuNotMoe/ydotool).
+
+```toml
+[swipe.commands.three]
+up = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Switch One Desktop Up\""
+down = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Switch One Desktop Down\""
+left = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Switch One Desktop to the Left\""
+right = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Switch One Desktop to the Right\""
+
+[swipe.commands.four]
+up = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Window Maximize\""
+down = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Window Minimize\""
+left = "xdotool key alt+Left"
+right = "xdotool key alt+Right"
+```
+
 ### State of the project
 
 - [x] Receiving swipe events from libinput
