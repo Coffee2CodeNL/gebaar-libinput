@@ -1,6 +1,8 @@
 Gebaar
 =========
 
+**I'm still around but haven't been able to work on this project due to health reasons, I hope to return to this project one day and fix all issues**
+
 WM Independent Touchpad Gesture Daemon for libinput
 
 _Gebaar means Gesture in Dutch_
