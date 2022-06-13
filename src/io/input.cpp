@@ -42,6 +42,51 @@ bool gebaar::io::Input::initialize_context()
     return libinput_udev_assign_seat(libinput, "seat0")==0;
 }
 
+int gebaar::io::Input::update_swipe_type_if_command_set(int swipe_type, int d, std::string commands[]) {
+    if (commands[swipe_type] == "") {
+        return swipe_type;
+    } else {
+        return swipe_type + d;
+    }
+}
+
+std::string gebaar::io::Input::determine_command(double x, double y, std::string commands[]) {
+    int swipe_type = 5; // middle = no swipe
+                       // 1 = left_up, 2 = up, 3 = right_up...
+                       // 1 2 3
+                       // 4 5 6
+                       // 7 8 9
+    const double OBLIQUE_RATIO = 0.414; // =~ tan(22.5);
+
+    if (abs(x) > abs(y)) {
+        // left or right swipe
+        swipe_type += x < 0 ? -1 : 1;
+
+        // check for oblique swipe
+        if (abs(y) / abs(x) > OBLIQUE_RATIO) {
+            if (y < 0) {
+                swipe_type = update_swipe_type_if_command_set(swipe_type, -3, commands);
+            } else {
+                swipe_type = update_swipe_type_if_command_set(swipe_type, 3, commands);
+            }
+        }
+    } else {
+        // up of down swipe
+        swipe_type += y < 0 ? -3 : 3;
+
+        // check for oblique swipe
+        if (abs(x) / abs(y) > OBLIQUE_RATIO) {
+            if (x < 0) {
+                swipe_type = update_swipe_type_if_command_set(swipe_type, -1, commands);
+            } else {
+                swipe_type = update_swipe_type_if_command_set(swipe_type, 1, commands);
+            }
+        }
+    }
+
+    return commands[swipe_type];
+}
+
 /**
  * This event has no coordinates, so it's an event that gives us a begin or end signal.
  * If it begins, we get the amount of fingers used.
@@ -58,35 +103,11 @@ void gebaar::io::Input::handle_swipe_event_without_coords(libinput_event_gesture
     else {
         double x = gesture_swipe_event.x;
         double y = gesture_swipe_event.y;
-        int swipe_type = 5; // middle = no swipe
-                           // 1 = left_up, 2 = up, 3 = right_up...
-                           // 1 2 3
-                           // 4 5 6
-                           // 7 8 9
-        const double OBLIQUE_RATIO = 0.414; // =~ tan(22.5);
-
-        if (abs(x) > abs(y)) {
-            // left or right swipe
-            swipe_type += x < 0 ? -1 : 1;
-
-            // check for oblique swipe
-            if (abs(y) / abs(x) > OBLIQUE_RATIO) {
-                swipe_type += y < 0 ? -3 : 3;
-            }
-        } else {
-            // up of down swipe
-            swipe_type += y < 0 ? -3 : 3;
-
-            // check for oblique swipe
-            if (abs(x) / abs(y) > OBLIQUE_RATIO) {
-                swipe_type += x < 0 ? -1 : 1;
-            }
-        }
 
         if (gesture_swipe_event.fingers == 3) {
-            std::system(config->swipe_three_commands[swipe_type].c_str());
+            std::system(determine_command(x, y, config->swipe_three_commands).c_str());
         } else if (gesture_swipe_event.fingers == 4) {
-            std::system(config->swipe_four_commands[swipe_type].c_str());
+            std::system(determine_command(x, y, config->swipe_four_commands).c_str());
         }
 
         gesture_swipe_event = {};
