@@ -38,7 +38,7 @@ Click to join: [![Discord](https://img.shields.io/discord/548978799136473106.svg
 14. Reboot and see the magic
 
 ```toml
-[commands.swipe.three]
+[swipe.commands.three]
 left_up = ""
 right_up = ""
 up = ""
@@ -48,7 +48,7 @@ down = ""
 left = ""
 right = ""
 
-[commands.swipe.four]
+[swipe.commands.four]
 left_up = ""
 right_up = ""
 up = ""
@@ -57,7 +57,25 @@ right_down = ""
 down = ""
 left = ""
 right = ""
+
+[pinch.commands]
+in = ""
+out = ""
+
+[pinch.settings]
+threshold = 0.25
+one_shot = false
+
+
+[swipe.settings]
+threshold = 0.5
+one_shot = true
+trigger_on_release = false
 ```
+
+* `pinch.settings.threshold` key sets the distance between fingers where it shold trigger.
+  Defaults to `0.25` which means fingers should travel exactly 25% distance from their initial position.
+* `swipe.settings.threshold` sets the limit when swipe gesture should be executed. Defaults to 0.5.
 
 ### Repository versions
 
@@ -69,7 +87,7 @@ right = ""
 
 _~/.config/gebaar/gebaard.toml_
 ```toml
-[commands.swipe.three]
+[swipe.commands.three]
 left_up = ""
 right_up = ""
 up = "bspc node -f north"
@@ -79,7 +97,8 @@ down = "bspc node -f south"
 left = "bspc node -f west"
 right = "bspc node -f east"
 
-[commands.swipe.four]
+
+[swipe.commands.four]
 left_up = ""
 right_up = ""
 up = "rofi -show combi"
@@ -88,16 +107,57 @@ right_down = ""
 down = ""
 left = "bspc desktop -f prev"
 right = "bspc desktop -f next"
+
+[pinch.commands.two]
+in = "xdotool key Control_L+equal"
+out = "xdotool key Control_L+minus"
+
+[pinch.settings]
+threshold=0.25
+one_shot=false
+
+[swipe.settings]
+threshold = 0.5
+one_shot = true
+trigger_on_release = false
 ```
 
 Add `gebaard -b` to `~/.config/bspwm/bspwmrc`
 
+**KDE Plasma 5**
+
+Any multiword value (like in some qdbus commands) must have escaped double quotes to work (`\"`).
+
+Additionally, in some distros (like openSUSE), the `qdbus` command might be named `qdbus-qt5`.
+Some navigation-related qdbus commands are provided directly by KWin and can be seen via `qdbus org.kde.KWin /KWin`,
+but most shortcuts can be checked with `qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.shortcutNames`.
+
+For Wayland users, a tool similar to `xdotool` in functionality is [ydotool](https://github.com/ReimuNotMoe/ydotool).
+
+```toml
+[swipe.commands.three]
+up = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Switch One Desktop Up\""
+down = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Switch One Desktop Down\""
+left = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Switch One Desktop to the Left\""
+right = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Switch One Desktop to the Right\""
+
+[swipe.commands.four]
+up = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Window Maximize\""
+down = "qdbus org.kde.kglobalaccel /component/kwin invokeShortcut \"Window Minimize\""
+left = "xdotool key alt+Left"
+right = "xdotool key alt+Right"
+```
+
 ### State of the project
 
 - [x] Receiving swipe events from libinput
-- [ ] Receiving pinch/zoom events from libinput
+- [x] Swipe gesture have trigger treshold
+- [x] Receiving pinch/zoom events from libinput
+- [x] Support continous pinch
+- [ ] Support pinch-and-rotate gestures
 - [ ] Receiving rotation events from libinput
 - [x] Converting libinput events to motions
 - [x] Running commands based on motions
 - [x] Refactor code to be up to Release standards, instead of testing-hell
+
 
