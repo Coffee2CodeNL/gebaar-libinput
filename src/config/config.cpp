@@ -61,6 +61,9 @@ void gebaar::config::Config::load_config()
             swipe_four_commands[8] = *config->get_qualified_as<std::string>("commands.swipe.four.down");
             swipe_four_commands[9] = *config->get_qualified_as<std::string>("commands.swipe.four.right_down");
 
+            pinch_in_command = *config->get_qualified_as<std::string>("commands.pinch.in");
+            pinch_out_command = *config->get_qualified_as<std::string>("commands.pinch.out");
+
             loaded = true;
         }
     }

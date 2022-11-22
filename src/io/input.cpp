@@ -104,6 +104,24 @@ void gebaar::io::Input::handle_swipe_event_with_coords(libinput_event_gesture* g
 }
 
 /**
+ * Handles pinch gesture events.
+ * Called at the end of the pinch event, so we just need to determine the pinch type.
+ *
+ * @param gev Gesture Event
+ */
+void gebaar::io::Input::handle_pinch_event(libinput_event_gesture* gev)
+{
+    double scale = libinput_event_gesture_get_scale(gev);
+    if (scale < 1) {
+        // pinch out
+        std::system(config->pinch_out_command.c_str());
+    } else {
+        // pinch in
+        std::system(config->pinch_in_command.c_str());
+    }
+}
+
+/**
  * Initialize the input system
  * @return bool
  */
@@ -214,6 +232,7 @@ void gebaar::io::Input::handle_event()
         case LIBINPUT_EVENT_GESTURE_PINCH_UPDATE:
             break;
         case LIBINPUT_EVENT_GESTURE_PINCH_END:
+            handle_pinch_event(libinput_event_get_gesture_event(libinput_event));
             break;
         case LIBINPUT_EVENT_SWITCH_TOGGLE:
             break;
