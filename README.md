@@ -61,7 +61,9 @@ right = ""
 
 ### Repository versions
 
-![](https://img.shields.io/aur/version/gebaar.svg?style=flat)  
+[![Packaging status](https://repology.org/badge/vertical-allrepos/gebaar.svg)](https://repology.org/project/gebaar/versions)
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/gebaar-libinput.svg)](https://repology.org/project/gebaar-libinput/versions)
 
 ### Examples
 
